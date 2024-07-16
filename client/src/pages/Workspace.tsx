@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import Invite from "../components/Invite";
 
 const Workspace: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [docId, setDocId] = useState();
+  const [invitees, setInvitees] = useState([]);
   const [savedStatus, setSavedStatus] = useState("save");
   const projectId = useParams().projectId;
 
@@ -28,6 +30,7 @@ const Workspace: React.FC = () => {
       console.log(error);
     }
   };
+  console.log(invitees);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -39,6 +42,7 @@ const Workspace: React.FC = () => {
         setTitle(res.data.data.document.title);
         setContent(res.data.data.document.content);
         setDocId(res.data.data.document._id);
+        setInvitees(res.data.data.collaborator);
       } catch (error) {
         console.log(error);
       }
@@ -49,15 +53,26 @@ const Workspace: React.FC = () => {
 
   return (
     <div className="bg-zinc-900 w-screen h-screen pt-[70px] text-white">
-      <Navbar />
-      <div className="  absolute top-0 h-[50px] left-[50%] translate-x-[-50%] flex justify-between items-center">
+      <div className="  absolute top-0 h-[50px] left-[50%] translate-x-[-50%] flex justify-between items-center bg-zinc-800 w-screen px-[6vw]">
+        <Link to={"/"}>
+          <div>
+            <img
+              src="/assets/logocollab.png"
+              alt=""
+              className=" w-10 object-cover"
+            />
+          </div>
+        </Link>
+
         <div className=" flex border  rounded-sm text-sm font-medium">
           <button className=" border-r px-2 py-1">Document</button>
           <button className=" border-r px-2 py-1">Both</button>
           <button className=" px-2 py-1">Canvas</button>
         </div>
+        <Invite projectId={projectId} collaborator={invitees} />
       </div>
       <div className="h-full w-screen px-[6vw]">
+        <div className=" absolute right-[6vw]"></div>
         <div className="w-full h-full px-[20%]">
           <div className="w-full h-full py-[50px] flex flex-col gap-10">
             <div className=" flex items-center justify-between">

@@ -5,6 +5,12 @@ const ProjectSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+  collaborator: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   document: {
     type: Schema.Types.ObjectId,
     ref: "Document",

@@ -30,7 +30,9 @@ const getProject = asyncHandler(async (req, res) => {
   try {
     const projectId = req.params.id;
     console.log(projectId);
-    const project = await Project.findById(projectId).populate("document");
+    const project = await Project.findById(projectId)
+      .populate("document")
+      .populate("collaborator");
     if (!project) {
       throw new ApiError(401, "Error occured while fetching project");
     }
@@ -45,7 +47,9 @@ const getProject = asyncHandler(async (req, res) => {
 
 const getProjects = asyncHandler(async (req, res) => {
   try {
-    const projects = await Project.find().populate("document");
+    const projects = await Project.find({ owner: req.user._id }).populate(
+      "document"
+    );
     return res
       .status(200)
       .json(new ApiResponse(200, projects, "Projects fetched"));
@@ -73,4 +77,23 @@ const updateDocument = asyncHandler(async (req, res) => {
   }
 });
 
-export { newProject, getProject, getProjects, updateDocument };
+const addCollab = asyncHandler(async (req, res) => {
+  const userId = req.params.userId;
+  const projectId = req.params.projectId;
+  try {
+    const project = await Project.findById(projectId);
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+    project.collaborator.push(userId);
+    await project.save();
+    return res
+      .status(200)
+      .json(new ApiResponse(200, project, "Project collaborator added"));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+});
+
+export { newProject, getProject, getProjects, updateDocument, addCollab };

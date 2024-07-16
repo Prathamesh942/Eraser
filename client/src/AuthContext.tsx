@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/v1/users/login",
+        "http://localhost:8000/api/v1/auth/login",
         {
           email,
           password,
