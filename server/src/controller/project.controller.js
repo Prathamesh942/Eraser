@@ -43,4 +43,34 @@ const getProject = asyncHandler(async (req, res) => {
   }
 });
 
-export { newProject, getProject };
+const getProjects = asyncHandler(async (req, res) => {
+  try {
+    const projects = await Project.find().populate("document");
+    return res
+      .status(200)
+      .json(new ApiResponse(200, projects, "Projects fetched"));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+});
+
+const updateDocument = asyncHandler(async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const documentId = req.params.id;
+    const document = await Document.findById(documentId);
+    if (!document) {
+      throw new ApiError(401, "Error occured while fetching project");
+    }
+    document.title = title;
+    document.content = content;
+    await document.save();
+    return res.status(200).json(new ApiResponse(200, document, "updated"));
+  } catch (error) {
+    console.log(error);
+    throw new ApiError(401, "Error occured while updating document");
+  }
+});
+
+export { newProject, getProject, getProjects, updateDocument };

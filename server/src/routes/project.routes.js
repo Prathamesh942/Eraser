@@ -1,11 +1,17 @@
 import { Router } from "express";
 import { verifyJwt } from "../middleware/auth.middleware.js";
-import { newProject, getProject } from "../controller/project.controller.js";
+import {
+  newProject,
+  getProject,
+  getProjects,
+  updateDocument,
+} from "../controller/project.controller.js";
 
 const router = Router();
 
-router.route("/:id").get(getProject);
+router.route("/").get(verifyJwt, getProjects);
+router.route("/:id").get(verifyJwt, getProject);
 router.route("/new").post(verifyJwt, newProject);
-// router.route("/update").put(updateProject);
+router.route("/update/:id").put(verifyJwt, updateDocument);
 
 export default router;
