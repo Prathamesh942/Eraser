@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRouter from "./routes/auth.routes.js";
+import projectRouter from "./routes/project.routes.js";
 const app = express();
 app.use(cookieParser());
 
@@ -22,5 +23,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/project", projectRouter);
 
 export { app };

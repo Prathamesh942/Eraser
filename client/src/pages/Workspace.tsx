@@ -1,15 +1,23 @@
 import React, { useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import Navbar from "../components/Navbar";
+import { useParams } from "react-router-dom";
 
 const Workspace: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const projectId = useParams();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
+
+  // const handleSave = () => {
+  //   try {
+  //     await axios.post
+  //   } catch (error) {
+
+  //   }
+  // }
 
   return (
     <div className="bg-zinc-900 w-screen h-screen pt-[70px] text-white">
