@@ -7,6 +7,8 @@ import { useAuth } from "../AuthContext";
 import { io } from "socket.io-client";
 import { useSocket } from "../SocketContext";
 
+const socket = io("http://localhost:8000");
+
 const Workspace: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -15,7 +17,6 @@ const Workspace: React.FC = () => {
   const [savedStatus, setSavedStatus] = useState("save");
   const [amICollaborator, setAmICollaborator] = useState(true);
   const projectId = useParams().projectId;
-  const socket = useSocket();
 
   const { user } = useAuth();
 
@@ -23,10 +24,14 @@ const Workspace: React.FC = () => {
     setContent(content);
   });
 
+  socket.on("user joined", () => {
+    console.log("new user joined in document");
+  });
+
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     setContent(e.target.value);
-    socket.emit("content", e.target.value);
+    socket.emit("content", { documentId: docId, content: e.target.value });
   };
 
   const handleSave = async () => {
@@ -63,12 +68,13 @@ const Workspace: React.FC = () => {
           }
         }
         if (res.data.data.owner == user.user._id) setAmICollaborator(true);
+        socket.emit("join document", res.data.data.document._id);
       } catch (error) {
         console.log(error);
       }
     };
     fetchProject();
-    console.log(title);
+    //joining the room
   }, []);
 
   return (

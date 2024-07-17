@@ -24,14 +24,18 @@ connectDB()
     io.on("connection", (socket) => {
       console.log("user connected");
 
+      socket.on("join document", async (documentId) => {
+        socket.join(documentId);
+        socket.to(documentId).emit("User joined");
+        console.log("doc id is", documentId);
+      });
+
       socket.on("title", (title) => {
-        console.log(title);
         io.emit("title", title);
       });
 
-      socket.on("content", (content) => {
-        log(content);
-        socket.broadcast.emit("content", content);
+      socket.on("content", ({ documentId, content }) => {
+        socket.to(documentId).emit("content", content);
       });
 
       socket.on("disconnect", () => {

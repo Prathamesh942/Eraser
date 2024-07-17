@@ -5,8 +5,8 @@ import { SocketProvider } from "./SocketContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <SocketProvider>
-      <App />
-    </SocketProvider>
+    {/* <SocketProvider> */}
+    <App />
+    {/* </SocketProvider> */}
   </React.StrictMode>
 );
