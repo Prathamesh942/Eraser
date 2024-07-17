@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Invite from "../components/Invite";
+import { useAuth } from "../AuthContext";
 
 const Workspace: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -10,7 +11,10 @@ const Workspace: React.FC = () => {
   const [docId, setDocId] = useState();
   const [invitees, setInvitees] = useState([]);
   const [savedStatus, setSavedStatus] = useState("save");
+  const [amICollaborator, setAmICollaborator] = useState(false);
   const projectId = useParams().projectId;
+
+  const { user } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
@@ -43,6 +47,12 @@ const Workspace: React.FC = () => {
         setContent(res.data.data.document.content);
         setDocId(res.data.data.document._id);
         setInvitees(res.data.data.collaborator);
+        for (let colllab of res.data.data.collaborator) {
+          if (colllab._id == user.user._id) {
+            setAmICollaborator(true);
+          }
+        }
+        if (res.data.data.owner == user.user._id) setAmICollaborator(true);
       } catch (error) {
         console.log(error);
       }
@@ -69,12 +79,19 @@ const Workspace: React.FC = () => {
           <button className=" border-r px-2 py-1">Both</button>
           <button className=" px-2 py-1">Canvas</button>
         </div>
-        <Invite projectId={projectId} collaborator={invitees} />
+        {amICollaborator && (
+          <Invite projectId={projectId} collaborator={invitees} />
+        )}
       </div>
       <div className="h-full w-screen px-[6vw]">
         <div className=" absolute right-[6vw]"></div>
         <div className="w-full h-full px-[20%]">
           <div className="w-full h-full py-[50px] flex flex-col gap-10">
+            {!amICollaborator && (
+              <div className=" w-[100%] flex justify-center bg-red-400 rounded-lg p-2">
+                Only collaborators added by owner can edit this project !
+              </div>
+            )}
             <div className=" flex items-center justify-between">
               <input
                 className=" bg-transparent text-white text-3xl outline-none"
@@ -84,13 +101,16 @@ const Workspace: React.FC = () => {
                 onChange={(e) => {
                   setTitle(e.target.value);
                 }}
+                disabled={!amICollaborator}
               />
-              <button
-                onClick={handleSave}
-                className=" rounded-lg bg-transparent"
-              >
-                {savedStatus}
-              </button>
+              {amICollaborator && (
+                <button
+                  onClick={handleSave}
+                  className=" rounded-lg bg-transparent"
+                >
+                  {savedStatus}
+                </button>
+              )}
             </div>
 
             <textarea
@@ -98,6 +118,7 @@ const Workspace: React.FC = () => {
               value={content}
               onChange={handleChange}
               placeholder="Type your notes or document here "
+              disabled={!amICollaborator}
             ></textarea>
           </div>
         </div>

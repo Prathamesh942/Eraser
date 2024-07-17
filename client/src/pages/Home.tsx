@@ -13,6 +13,15 @@ const Home = () => {
     navigate("/login");
   }
 
+  const handleNewProject = async () => {
+    try {
+      const res = await axios.post("http://localhost:8000/api/v1/project/new");
+      navigate(`/workspace/${res.data.data._id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -28,7 +37,10 @@ const Home = () => {
     <div className=" w-screen h-screen bg-zinc-900  pt-[70px] text-white">
       <Navbar />
       <div className=" flex justify-center items-center">
-        <button className=" bg-transparent border p-5 rounded-xl flex justify-center items-center gap-4">
+        <button
+          className=" bg-transparent border p-5 rounded-xl flex justify-center items-center gap-4"
+          onClick={handleNewProject}
+        >
           Create New Project
         </button>
       </div>

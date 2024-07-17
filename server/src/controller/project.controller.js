@@ -13,7 +13,7 @@ const newProject = asyncHandler(async (req, res) => {
     }
     const document = await Document.create({
       project: project._id,
-      title: "",
+      title: "Untitled",
       content: "",
     });
     project.document = document._id;

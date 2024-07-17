@@ -24,6 +24,7 @@ const Invite = ({ projectId, collaborator = [] }) => {
           if (res?.data?.data.length) {
             setUserId(res.data.data[0]._id);
             setExists(true);
+            console.log(exists);
           } else {
             setExists(false);
           }
@@ -41,7 +42,7 @@ const Invite = ({ projectId, collaborator = [] }) => {
 
   const addCollab = async () => {
     console.log(projectId, userId);
-    for (collab of collaborator) {
+    for (let collab of collaborator) {
       if (collab.email == user) {
         setUser("");
         return;
@@ -87,7 +88,7 @@ const Invite = ({ projectId, collaborator = [] }) => {
             <button
               className={`${
                 exists ? "bg-blue-400" : "bg-zinc-800"
-              } p-2 rounded-md`}
+              } p-2 rounded-md `}
               disabled={!exists}
               onClick={addCollab}
             >
