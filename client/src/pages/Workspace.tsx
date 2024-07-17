@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Invite from "../components/Invite";
 import { useAuth } from "../AuthContext";
+import { io } from "socket.io-client";
+import { useSocket } from "../SocketContext";
 
 const Workspace: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -13,11 +15,18 @@ const Workspace: React.FC = () => {
   const [savedStatus, setSavedStatus] = useState("save");
   const [amICollaborator, setAmICollaborator] = useState(true);
   const projectId = useParams().projectId;
+  const socket = useSocket();
 
   const { user } = useAuth();
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  socket.on("content", (content) => {
+    setContent(content);
+  });
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
     setContent(e.target.value);
+    socket.emit("content", e.target.value);
   };
 
   const handleSave = async () => {
@@ -117,7 +126,7 @@ const Workspace: React.FC = () => {
             <textarea
               className="flex-grow  bg-transparent text-white rounded-md focus:outline-none focus:border-zinc-500 "
               value={content}
-              onChange={handleChange}
+              onChange={handleContentChange}
               placeholder="Type your notes or document here "
               disabled={!amICollaborator}
             ></textarea>

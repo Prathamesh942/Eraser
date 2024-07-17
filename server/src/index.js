@@ -4,6 +4,7 @@ import connectDB from "./db/index.js";
 import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
+import { log } from "console";
 
 const server = http.createServer(app);
 
@@ -22,6 +23,17 @@ connectDB()
   .then(() => {
     io.on("connection", (socket) => {
       console.log("user connected");
+
+      socket.on("title", (title) => {
+        console.log(title);
+        io.emit("title", title);
+      });
+
+      socket.on("content", (content) => {
+        log(content);
+        socket.broadcast.emit("content", content);
+      });
+
       socket.on("disconnect", () => {
         console.log("User disconnected");
       });

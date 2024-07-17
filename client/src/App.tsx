@@ -36,21 +36,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  useEffect(() => {
-    const socket = io("http://localhost:8000");
-
-    socket.on("connect", () => {
-      console.log("Connected to server");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from server");
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
   return (
     <AuthProvider>
       <RouterProvider router={router} />
