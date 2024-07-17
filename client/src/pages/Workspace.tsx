@@ -16,16 +16,14 @@ const Workspace: React.FC = () => {
   const [invitees, setInvitees] = useState([]);
   const [savedStatus, setSavedStatus] = useState("save");
   const [amICollaborator, setAmICollaborator] = useState(true);
+  const [usersInRoom, setUsersInRoom] = useState([]);
+
   const projectId = useParams().projectId;
 
   const { user } = useAuth();
 
   socket.on("content", (content) => {
     setContent(content);
-  });
-
-  socket.on("user joined", () => {
-    console.log("new user joined in document");
   });
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -68,7 +66,15 @@ const Workspace: React.FC = () => {
           }
         }
         if (res.data.data.owner == user.user._id) setAmICollaborator(true);
-        socket.emit("join document", res.data.data.document._id);
+        socket.emit("join document", {
+          documentId: res.data.data.document._id,
+          userId: user.user._id,
+        });
+        socket.on("user joined", (usersInRoom) => {
+          console.log(usersInRoom);
+          setUsersInRoom(usersInRoom);
+          console.log(usersInRoom);
+        });
       } catch (error) {
         console.log(error);
       }
@@ -95,9 +101,20 @@ const Workspace: React.FC = () => {
           <button className=" border-r px-2 py-1">Both</button>
           <button className=" px-2 py-1">Canvas</button>
         </div>
-        {amICollaborator && (
-          <Invite projectId={projectId} collaborator={invitees} />
-        )}
+        <div className=" flex gap-6 justify-center items-center">
+          <div className=" flex">
+            {usersInRoom.map((user) => {
+              return (
+                <div className=" bg-green-400 w-8 h-8 rounded-full flex justify-center items-center shadow-lg">
+                  {user.name[0]}
+                </div>
+              );
+            })}
+          </div>
+          {amICollaborator && (
+            <Invite projectId={projectId} collaborator={invitees} />
+          )}
+        </div>
       </div>
       <div className="h-full w-screen px-[6vw]">
         <div className=" absolute right-[6vw]"></div>
