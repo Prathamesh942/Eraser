@@ -11,7 +11,7 @@ const Workspace: React.FC = () => {
   const [docId, setDocId] = useState();
   const [invitees, setInvitees] = useState([]);
   const [savedStatus, setSavedStatus] = useState("save");
-  const [amICollaborator, setAmICollaborator] = useState(false);
+  const [amICollaborator, setAmICollaborator] = useState(true);
   const projectId = useParams().projectId;
 
   const { user } = useAuth();
@@ -47,6 +47,7 @@ const Workspace: React.FC = () => {
         setContent(res.data.data.document.content);
         setDocId(res.data.data.document._id);
         setInvitees(res.data.data.collaborator);
+        setAmICollaborator(false);
         for (let colllab of res.data.data.collaborator) {
           if (colllab._id == user.user._id) {
             setAmICollaborator(true);

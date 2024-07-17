@@ -29,7 +29,6 @@ const newProject = asyncHandler(async (req, res) => {
 const getProject = asyncHandler(async (req, res) => {
   try {
     const projectId = req.params.id;
-    console.log(projectId);
     const project = await Project.findById(projectId)
       .populate("document")
       .populate("collaborator");
